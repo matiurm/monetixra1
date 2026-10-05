@@ -1,0 +1,258 @@
+/* Mobile Performance Optimization CSS */
+
+/* ═══════════════════════════════════════════════════════
+   Mobile-Specific Styles
+   ═══════════════════════════════════════════════════════ */
+
+/* Touch optimization */
+* {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Interactive elements */
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+  min-height: 44px; /* Minimum touch target size */
+  min-width: 44px;
+}
+
+/* Prevent zoom on input focus */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea {
+  font-size: 16px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Lazy Loading States
+   ═══════════════════════════════════════════════════════ */
+
+img[data-src] {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+img.loaded {
+  opacity: 1;
+}
+
+img.error {
+  opacity: 0.5;
+  background-color: #f0f0f0;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Mobile Device Optimizations
+   ═══════════════════════════════════════════════════════ */
+
+body.mobile-device {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Reduced Motion
+   ═══════════════════════════════════════════════════════ */
+
+body.reduced-motion *,
+body.reduced-motion *::before,
+body.reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Slow Connection Optimizations
+   ═══════════════════════════════════════════════════════ */
+
+body.slow-connection {
+  /* Disable non-essential backgrounds */
+  background-image: none !important;
+}
+
+body.slow-connection video {
+  display: none;
+}
+
+body.slow-connection .auto-play-media {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Safe Area Insets (notch support)
+   ═══════════════════════════════════════════════════════ */
+
+@supports (padding: max(0px)) {
+  .safe-area-top {
+    padding-top: max(20px, env(safe-area-inset-top));
+  }
+
+  .safe-area-bottom {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+
+  .safe-area-left {
+    padding-left: max(20px, env(safe-area-inset-left));
+  }
+
+  .safe-area-right {
+    padding-right: max(20px, env(safe-area-inset-right));
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   Mobile-Specific Layout
+   ═══════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Reduce font sizes */
+  body {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  /* Optimize spacing */
+  .container {
+    padding: 0 16px;
+  }
+
+  /* Stack flex containers */
+  .flex-row {
+    flex-direction: column;
+  }
+
+  /* Hide non-essential elements */
+  .desktop-only {
+    display: none !important;
+  }
+
+  /* Optimize buttons */
+  .btn {
+    padding: 12px 20px;
+    font-size: 16px;
+  }
+
+  /* Optimize cards */
+  .card {
+    margin: 8px 0;
+    padding: 12px;
+  }
+
+  /* Optimize lists */
+  .list-item {
+    padding: 12px;
+    margin: 4px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Further optimizations for small screens */
+  body {
+    font-size: 13px;
+  }
+
+  .container {
+    padding: 0 12px;
+  }
+
+  .btn {
+    padding: 10px 16px;
+  }
+
+  .card {
+    margin: 6px 0;
+    padding: 10px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   Performance Optimizations
+   ═══════════════════════════════════════════════════════ */
+
+/* GPU acceleration for animations */
+.animate-element {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Contain layout for better performance */
+.video-player,
+.image-container {
+  contain: layout style paint;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Touch Feedback
+   ═══════════════════════════════════════════════════════ */
+
+.touch-active {
+  opacity: 0.7;
+  transform: scale(0.98);
+  transition: opacity 0.1s, transform 0.1s;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Loading States
+   ═══════════════════════════════════════════════════════ */
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   Image Optimizations
+   ═══════════════════════════════════════════════════════ */
+
+img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.responsive-image {
+  width: 100%;
+  height: auto;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Scrollbar Hiding (iOS)
+   ═══════════════════════════════════════════════════════ */
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
