@@ -1,0 +1,491 @@
+# GraphQL Schema for Monetixra
+# Advanced API for data fetching and real-time updates
+
+type User {
+  id: ID!
+  username: String!
+  name: String!
+  email: String
+  avatar: String
+  bio: String
+  points: Int!
+  totalEarned: Int!
+  isPremium: Boolean!
+  premiumExpiry: DateTime
+  streak: Int!
+  lastPostDate: DateTime
+  kycVerified: Boolean!
+  badges: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  online: Boolean!
+  followers: [User!]!
+  following: [User!]!
+  posts: [Post!]!
+  transactions: [Transaction!]!
+}
+
+type Post {
+  id: ID!
+  author: User!
+  text: String
+  file: String
+  fileType: String
+  duration: Int
+  likes: Int!
+  comments: Int!
+  shares: Int!
+  views: Int!
+  hashtags: [String!]!
+  mentions: [User!]!
+  isLive: Boolean!
+  isPinned: Boolean!
+  copyright: Boolean
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  location: Location
+  targeting: PostTargeting
+  monetization: PostMonetization
+}
+
+type Comment {
+  id: ID!
+  post: Post!
+  author: User!
+  text: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  likes: Int!
+  replies: [Comment!]!
+}
+
+type Transaction {
+  id: ID!
+  user: User!
+  type: TransactionType!
+  amount: Int!
+  status: String!
+  metadata: JSON
+  createdAt: DateTime!
+}
+
+type Group {
+  id: ID!
+  name: String!
+  description: String
+  type: GroupType!
+  coverImage: String
+  profileImage: String
+  category: String
+  location: Location
+  createdBy: User!
+  memberCount: Int!
+  postCount: Int!
+  rules: [String!]!
+  tags: [String!]!
+  settings: JSON
+  members: [User!]!
+  posts: [Post!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Page {
+  id: ID!
+  name: String!
+  username: String!
+  description: String
+  type: PageType!
+  coverImage: String
+  profileImage: String
+  category: String
+  location: Location
+  website: String
+  phone: String
+  email: String
+  createdBy: User!
+  followerCount: Int!
+  postCount: Int!
+  verified: Boolean!
+  tags: [String!]!
+  settings: JSON
+  followers: [User!]!
+  posts: [Post!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type NFT {
+  id: ID!
+  name: String!
+  description: String
+  image: String
+  creator: User!
+  owner: User!
+  price: Float!
+  currency: String!
+  collection: String
+  royalty: Float!
+  properties: JSON
+  listed: Boolean!
+  createdAt: DateTime!
+  transactions: [NFTTransaction!]!
+}
+
+type NFTTransaction {
+  id: ID!
+  nft: NFT!
+  from: User
+  to: User!
+  price: Float!
+  currency: String!
+  timestamp: DateTime!
+}
+
+type LiveStream {
+  id: ID!
+  post: Post!
+  broadcaster: User!
+  viewers: Int!
+  duration: Int!
+  status: LiveStreamStatus!
+  startedAt: DateTime!
+  endedAt: DateTime
+  recordingUrl: String
+  comments: [LiveComment!]!
+}
+
+type LiveComment {
+  id: ID!
+  stream: LiveStream!
+  user: User!
+  text: String!
+  timestamp: DateTime!
+}
+
+type Location {
+  latitude: Float!
+  longitude: Float!
+  city: String
+  country: String
+}
+
+type PostTargeting {
+  type: String!
+  audience: [User!]!
+  except: [User!]!
+  location: Location
+  ageRange: AgeRange
+  gender: String
+  interests: [String!]!
+  groups: [Group!]!
+}
+
+type PostMonetization {
+  enabled: Boolean!
+  price: Float
+  currency: String
+  nftGated: Boolean
+  subscriptionRequired: Boolean
+}
+
+type AgeRange {
+  min: Int!
+  max: Int!
+}
+
+enum TransactionType {
+  EARN
+  SPEND
+  WITHDRAW
+  DEPOSIT
+  REFUND
+  BONUS
+}
+
+enum GroupType {
+  PUBLIC
+  PRIVATE
+  SECRET
+}
+
+enum PageType {
+  BUSINESS
+  BRAND
+  COMMUNITY
+  ENTERTAINMENT
+  CREATOR
+}
+
+enum LiveStreamStatus {
+  SCHEDULED
+  LIVE
+  ENDED
+  CANCELLED
+}
+
+# Queries
+type Query {
+  # User queries
+  me: User
+  user(id: ID!): User
+  users(limit: Int, offset: Int): [User!]!
+  searchUsers(query: String!, limit: Int): [User!]!
+  
+  # Post queries
+  post(id: ID!): Post
+  posts(limit: Int, offset: Int, type: String): [Post!]!
+  feed(limit: Int, offset: Int): [Post!]!
+  trendingPosts(limit: Int): [Post!]!
+  searchPosts(query: String!, limit: Int): [Post!]!
+  
+  # Group queries
+  group(id: ID!): Group
+  groups(limit: Int, offset: Int): [Group!]!
+  myGroups: [Group!]!
+  
+  # Page queries
+  page(id: ID!): Page
+  pages(limit: Int, offset: Int): [Page!]!
+  myPages: [Page!]!
+  
+  # NFT queries
+  nft(id: ID!): NFT
+  nfts(limit: Int, offset: Int): [NFT!]!
+  myNFTs: [NFT!]!
+  marketplace(limit: Int, offset: Int): [NFT!]!
+  
+  # Live stream queries
+  liveStream(id: ID!): LiveStream
+  liveStreams(limit: Int): [LiveStream!]!
+  myLiveStreams: [LiveStream!]!
+  
+  # Analytics queries
+  analytics(userId: ID!, period: String): Analytics
+  leaderboard(type: String!, limit: Int): [User!]!
+  
+  # Search
+  search(query: String!, type: String!, limit: Int): SearchResult!
+}
+
+type SearchResult {
+  users: [User!]!
+  posts: [Post!]!
+  groups: [Group!]!
+  pages: [Page!]!
+  total: Int!
+}
+
+type Analytics {
+  userId: ID!
+  period: String!
+  earnings: Float!
+  points: Int!
+  posts: Int!
+  likes: Int!
+  comments: Int!
+  shares: Int!
+  views: Int!
+  followers: Int!
+  engagement: Float!
+  growth: Float!
+}
+
+# Mutations
+type Mutation {
+  # User mutations
+  updateProfile(input: UpdateProfileInput!): User!
+  followUser(userId: ID!): User!
+  unfollowUser(userId: ID!): User!
+  
+  # Post mutations
+  createPost(input: CreatePostInput!): Post!
+  updatePost(id: ID!, input: UpdatePostInput!): Post!
+  deletePost(id: ID!): Boolean!
+  likePost(id: ID!): Post!
+  unlikePost(id: ID!): Post!
+  commentOnPost(id: ID!, text: String!): Comment!
+  
+  # Group mutations
+  createGroup(input: CreateGroupInput!): Group!
+  joinGroup(groupId: ID!): Group!
+  leaveGroup(groupId: ID!): Group!
+  
+  # Page mutations
+  createPage(input: CreatePageInput!): Page!
+  followPage(pageId: ID!): Page!
+  unfollowPage(pageId: ID!): Page!
+  
+  # NFT mutations
+  createNFT(input: CreateNFTInput!): NFT!
+  listNFT(id: ID!, price: Float!): NFT!
+  buyNFT(id: ID!): NFT!
+  
+  # Live stream mutations
+  startLiveStream(input: StartLiveStreamInput!): LiveStream!
+  endLiveStream(id: ID!): LiveStream!
+  commentOnLiveStream(id: ID!, text: String!): LiveComment!
+  
+  # Transaction mutations
+  withdraw(input: WithdrawInput!): Transaction!
+  deposit(input: DepositInput!): Transaction!
+  
+  # Point mutations
+  addPoints(userId: ID!, amount: Int!, reason: String!): User!
+  deductPoints(userId: ID!, amount: Int!, reason: String!): User!
+}
+
+input UpdateProfileInput {
+  name: String
+  bio: String
+  avatar: String
+  email: String
+}
+
+input CreatePostInput {
+  text: String
+  file: String
+  fileType: String
+  hashtags: [String!]
+  location: LocationInput
+  targeting: PostTargetingInput
+  monetization: PostMonetizationInput
+}
+
+input UpdatePostInput {
+  text: String
+  hashtags: [String!]
+  targeting: PostTargetingInput
+  monetization: PostMonetizationInput
+}
+
+input CreateGroupInput {
+  name: String!
+  description: String
+  type: GroupType!
+  category: String
+  location: LocationInput
+  rules: [String!]
+}
+
+input CreatePageInput {
+  name: String!
+  username: String!
+  description: String
+  type: PageType!
+  category: String
+  location: LocationInput
+  website: String
+  phone: String
+  email: String
+}
+
+input CreateNFTInput {
+  name: String!
+  description: String
+  image: String!
+  price: Float!
+  currency: String!
+  collection: String!
+  royalty: Float!
+  properties: JSON
+}
+
+input StartLiveStreamInput {
+  postId: ID!
+  title: String
+  description: String
+}
+
+input WithdrawInput {
+  amount: Int!
+  method: String!
+  account: String!
+}
+
+input DepositInput {
+  amount: Int!
+  method: String!
+  account: String!
+}
+
+input LocationInput {
+  latitude: Float!
+  longitude: Float!
+  city: String
+  country: String
+}
+
+input PostTargetingInput {
+  type: String!
+  audience: [ID!]
+  except: [ID!]
+  location: LocationInput
+  ageRange: AgeRangeInput
+  gender: String
+  interests: [String!]
+  groups: [ID!]
+}
+
+input AgeRangeInput {
+  min: Int!
+  max: Int!
+}
+
+input PostMonetizationInput {
+  enabled: Boolean!
+  price: Float
+  currency: String
+  nftGated: Boolean
+  subscriptionRequired: Boolean
+}
+
+# Subscriptions
+type Subscription {
+  # Real-time user updates
+  userUpdated(userId: ID!): User!
+  userOnline(userId: ID!): User!
+  userOffline(userId: ID!): User!
+  
+  # Real-time post updates
+  postCreated: Post!
+  postUpdated(postId: ID!): Post!
+  postDeleted(postId: ID!): Post!
+  postLiked(postId: ID!): Post!
+  
+  # Real-time comment updates
+  commentAdded(postId: ID!): Comment!
+  
+  # Real-time live stream updates
+  liveStreamStarted: LiveStream!
+  liveStreamEnded(streamId: ID!): LiveStream!
+  liveCommentAdded(streamId: ID!): LiveComment!
+  viewerCountChanged(streamId: ID!): Int!
+  
+  # Real-time message updates
+  messageReceived(chatId: ID!): Message!
+  
+  # Real-time notification updates
+  notificationReceived(userId: ID!): Notification!
+}
+
+type Message {
+  id: ID!
+  from: User!
+  to: User!
+  text: String!
+  type: String
+  createdAt: DateTime!
+  read: Boolean!
+}
+
+type Notification {
+  id: ID!
+  to: User!
+  from: User
+  type: String!
+  icon: String!
+  message: String!
+  read: Boolean!
+  createdAt: DateTime!
+}
