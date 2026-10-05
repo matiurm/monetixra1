@@ -1,0 +1,1 @@
+(function () { document.addEventListener('DOMContentLoaded', () => document.querySelectorAll('[data-income-ad], .ad-native').forEach(el => window.IncomeAdsHub?.render(el, el.dataset.incomeAd)), { once: true }); })();
